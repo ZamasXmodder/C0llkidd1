@@ -1,0 +1,135 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Esperar el RemoteEvent
+local remoteEvent = ReplicatedStorage:WaitForChild("c00lkiddRemote")
+
+-- ID de imagen personalizada
+local CUSTOM_IMAGE_ID = "rbxassetid://122516441342599"
+
+-- Crear el ScreenGui principal (SOLO VISIBLE PARA TI)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "c00lkiddGUI"
+screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
+
+-- Frame principal
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 300, 0, 450)
+mainFrame.Position = UDim2.new(0, 50, 0, 50)
+mainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+mainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+mainFrame.BorderSizePixel = 2
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Header
+local header = Instance.new("Frame")
+header.Name = "Header"
+header.Size = UDim2.new(1, 0, 0, 25)
+header.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+header.BorderSizePixel = 0
+header.Parent = mainFrame
+
+-- Título
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -50, 1, 0)
+titleLabel.Position = UDim2.new(0, 5, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "c00lkidd's GUI"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 14
+titleLabel.Font = Enum.Font.Arial
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = header
+
+-- Botón cerrar
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 20, 0, 20)
+closeButton.Position = UDim2.new(1, -22, 0, 2)
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.TextSize = 12
+closeButton.Font = Enum.Font.Arial
+closeButton.Parent = header
+
+-- ScrollFrame
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -10, 1, -35)
+scrollFrame.Position = UDim2.new(0, 5, 0, 30)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+scrollFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+scrollFrame.BorderSizePixel = 1
+scrollFrame.ScrollBarThickness = 10
+scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 0, 0)
+scrollFrame.Parent = mainFrame
+
+-- Layout
+local listLayout = Instance.new("UIListLayout")
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Padding = UDim.new(0, 2)
+listLayout.Parent = scrollFrame
+
+-- Función para crear botones
+local function createButton(text, action, layoutOrder)
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1, -10, 0, 25)
+	button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	button.BorderSizePixel = 1
+	button.Text = text
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.TextSize = 12
+	button.Font = Enum.Font.Arial
+	button.LayoutOrder = layoutOrder
+	button.Parent = scrollFrame
+
+	button.MouseEnter:Connect(function()
+		button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+	end)
+
+	button.MouseLeave:Connect(function()
+		button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	end)
+
+	-- ENVIAR COMANDO AL SERVIDOR (AFECTA A TODOS)
+	button.MouseButton1Click:Connect(function()
+		remoteEvent:FireServer(action)
+	end)
+end
+
+-- Crear todos los botones
+createButton("Kick All", "kickAll", 1)
+createButton("Shutdown", "shutdown", 2)
+createButton("Disco", "disco", 3)
+createButton("It's Raining Tacos", "rainTacos", 4)
+createButton("Stop Music", "stopMusic", 5)
+createButton("Decalspam", "decalspam", 6)
+createButton("Skybox", "skybox", 7)
+createButton("Hint", "hint", 8)
+createButton("Message", "message", 9)
+createButton("Particles", "particles", 10)
+createButton("UnAnchor All", "unanchorAll", 11)
+createButton("Clear Workspace", "clearWorkspace", 12)
+createButton("Image Flood", "imageFlood", 13)
+createButton("666", "effect666", 14)
+
+-- Actualizar scroll
+local function updateScrollSize()
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
+end
+listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollSize)
+updateScrollSize()
+
+-- Cerrar GUI
+closeButton.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
+end)
+
+print("GUI cargado - Solo visible para ti, funciones afectan al servidor")
